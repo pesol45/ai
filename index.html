@@ -2,234 +2,610 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Code Hub - Realtime</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Nexus: Код-центр нейросетей с Firebase</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <!-- Font Awesome 6 (бесплатные иконки) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
-            --bg: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --accent: #bb86fc;
-            --secondary: #03dac6;
-            --text: #e0e0e0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Fira Code', monospace, system-ui;
         }
-
-        .container { max-width: 1200px; margin: 0 auto; }
-
-        /* Сетка нейросетей */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+        body {
+            background: linear-gradient(145deg, #0A0F1E 0%, #0B1225 100%);
+            color: #EFF3FC;
+            padding: 24px 20px 40px;
         }
-
-        .ai-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid #333;
-            transition: transform 0.2s;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-
-        .ai-header {
+        /* заголовок */
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFFFFF, #A0C0FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .sub {
+            text-align: center;
+            opacity: 0.7;
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed #2C3A5E;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 8px;
+        }
+        /* панель админа */
+        .admin-panel {
+            background: rgba(18, 25, 45, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(72, 120, 255, 0.3);
+            padding: 20px 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+            transition: 0.2s;
+        }
+        .admin-header {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent);
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
-
-        /* "Скрещенный" вид кода */
-        .code-display {
-            background: #000;
-            color: #50fa7b;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap; /* Сжимаем в одну строку */
-            border: 1px solid #222;
-            margin-bottom: 15px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .copy-btn { background: var(--secondary); color: #000; }
-        .copy-btn:hover { opacity: 0.8; }
-
-        /* Админ-панель */
-        .admin-section {
-            background: #252525;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 40px;
-            border: 2px dashed var(--accent);
-        }
-
-        .admin-section h2 { margin-top: 0; color: var(--accent); }
-        
-        .admin-controls {
+        .admin-header h2 {
+            font-size: 1.4rem;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 10px;
+            background: #1E2A44;
+            padding: 6px 16px;
+            border-radius: 60px;
         }
-
-        select, textarea, input {
-            background: #121212;
-            color: #fff;
-            border: 1px solid #444;
-            padding: 10px;
-            border-radius: 5px;
+        .admin-header i {
+            color: #5f9eff;
         }
-
-        textarea { min-height: 100px; resize: vertical; }
-
-        .hidden { display: none; }
-        
-        .status { font-size: 0.8rem; margin-top: 5px; color: #888; }
+        .secret-badge {
+            background: #11212e;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #8db5ff;
+        }
+        textarea {
+            width: 100%;
+            background: #03060e;
+            border: 1px solid #2c3e66;
+            border-radius: 20px;
+            padding: 16px 18px;
+            color: #d6e6ff;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-bottom: 18px;
+            transition: 0.2s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #5f8eff;
+            box-shadow: 0 0 0 2px rgba(95, 142, 255, 0.3);
+        }
+        .admin-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        button {
+            background: #212E4E;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(4px);
+        }
+        button.primary {
+            background: #2b4bff;
+            box-shadow: 0 4px 12px rgba(43, 75, 255, 0.3);
+        }
+        button.primary:hover {
+            background: #1f3dd4;
+            transform: scale(1.02);
+        }
+        button.danger {
+            background: #3a2a3f;
+            color: #ffa69e;
+        }
+        button.danger:hover {
+            background: #5e3542;
+        }
+        button:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+        }
+        /* сетка карточек нейросетей */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 28px;
+            margin-top: 20px;
+        }
+        .ai-card {
+            background: rgba(12, 19, 33, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            border: 1px solid rgba(72, 120, 255, 0.35);
+            transition: all 0.25s;
+            overflow: hidden;
+            box-shadow: 0 12px 28px -10px rgba(0,0,0,0.4);
+        }
+        .ai-card:hover {
+            border-color: #5f8eff;
+            box-shadow: 0 20px 32px -12px #2b4bff30;
+            transform: translateY(-3px);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px 8px 22px;
+            border-bottom: 1px solid #1F2A44;
+        }
+        .ai-name {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(120deg, #EEF4FF, #B9D0FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .copy-btn {
+            background: #1A2542;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            gap: 8px;
+        }
+        .copy-btn i {
+            font-size: 0.9rem;
+        }
+        .code-block {
+            background: #01060f;
+            margin: 16px 18px 20px 18px;
+            border-radius: 18px;
+            padding: 12px 14px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: 1px solid #202c46;
+            /* стиль перекрёстного отображения: используем текст + псевдоэлемент? 
+               требование: "код писался скрещённый а копировался полный"
+               🧠 реализация: храним полный код, но отображаем зашифрованный (скремблированный) 
+               символ ``` или замену на крестообразные символы? лучше: визуально каждый символ 
+               перекрыт пересекающимися линиями? но "скрещённый" = возможно стиль "strikethrough" + искажение.
+               Сделаем так: текст отображается с text-decoration: line-through + opacity + легкий blur? но читаем?
+               Более эстетично: поверх полного кода наложить псевдоэлемент с тем же текстом, заблюренным, 
+               а так же крестовая штриховка? Я реализую уникальный способ: отображаем код с чередованием 
+               случайных знаков "✗" наложенных? но риск нечитаемости. ЛУЧШЕ: стиль text-decoration: line-through double,
+               плюс дополнительно прозрачный узор «крестики» фоном. Но пользователь должен видеть, что код искажён, 
+               но скопируется оригинал. Самый безопасный: отображаем код с line-through, + псевдоэлемент перечёркивания каскадом.
+               Итог: внутри .code-block отображается полный код, но стилизован так, что он перечеркнут (скрещён).
+               Плюс можно добавить наложение символов Х поверх текста? но сохраним читаемость для контекста.
+               Сделаем: обычный шрифт, но каждый символ обернут? Нет, применяем text-decoration: line-through;
+               и дополнительно ::after с содержимым "✗ ✗ ✗" поверх для эстетики. 
+               Также при наведении можно показывать легкий тултип что копируется полный текст.
+            */
+            position: relative;
+            text-decoration: line-through;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #ff4d6d80;
+            text-decoration-style: double;
+            background-image: repeating-linear-gradient(45deg, rgba(255,70,100,0.08) 0px, rgba(255,70,100,0.08) 2px, transparent 2px, transparent 8px);
+        }
+        /* дополнительный перекрестный эффект "скрещённый" */
+        .code-block::before {
+            content: "✗ ✗ ✗";
+            position: absolute;
+            bottom: 4px;
+            right: 12px;
+            font-size: 24px;
+            opacity: 0.2;
+            color: #ff8888;
+            pointer-events: none;
+            font-weight: bold;
+        }
+        .code-block:hover::before {
+            opacity: 0.35;
+        }
+        /* подсказка */
+        .copy-tip {
+            margin-left: 18px;
+            margin-bottom: 18px;
+            font-size: 0.7rem;
+            color: #7f8ea3;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1F3A5F;
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 500;
+            z-index: 1000;
+            border-left: 5px solid #4c9aff;
+            box-shadow: 0 5px 18px black;
+            transition: 0.2s;
+        }
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            opacity: 0.5;
+            font-size: 0.7rem;
+        }
+        @media (max-width: 780px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .admin-header h2 {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>AI Code Realtime Hub</h1>
+    <h1>⚡ AI CODECROSS ⚡</h1>
+    <div style="text-align: center;"><span class="sub">скрещённый обзор · чистый код · копируй оригинал</span></div>
 
-    <div id="login-zone">
-        <button onclick="showAdmin()" style="width: auto; background: #333; color: #ccc;">Войти в Админку</button>
+    <!-- Админ-панель для вставки кода в Firebase -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2><i class="fas fa-laptop-code"></i> Админ-панель</h2>
+            <div class="secret-badge"><i class="fas fa-database"></i> Firestore realtime</div>
+        </div>
+        <div style="margin-bottom: 12px; display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex:1; min-width: 180px;">
+                <label style="font-weight: 500; font-size: 0.8rem;"><i class="fas fa-microchip"></i> Выбери нейросеть</label>
+                <select id="aiSelectAdmin" style="width:100%; background:#0E1628; border:1px solid #2C3E66; border-radius: 40px; padding: 12px 16px; color: white; margin-top: 5px;">
+                    <option value="Copilot">🤖 Copilot</option>
+                    <option value="Grok">🧠 Grok</option>
+                    <option value="Perplexity">🔍 Perplexity</option>
+                    <option value="Claude">🍃 Claude</option>
+                    <option value="ChatGPT">💬 ChatGPT</option>
+                    <option value="Алиса AI">🎤 Алиса AI</option>
+                    <option value="Gemini">✨ Gemini</option>
+                    <option value="DeepSeek">🧊 DeepSeek</option>
+                </select>
+            </div>
+            <div style="flex:3;">
+                <label style="font-weight: 500; font-size: 0.8rem;"><i class="fas fa-code"></i> Код для этой нейросети (полная версия, будет отображаться скрещённо)</label>
+                <textarea id="adminCodeInput" rows="3" placeholder="Например: async function callAI() { return 'Hello'; }"></textarea>
+            </div>
+        </div>
+        <div class="admin-actions">
+            <button id="publishCodeBtn" class="primary"><i class="fas fa-cloud-upload-alt"></i> Опубликовать код</button>
+            <button id="resetDefaultCodesBtn" class="danger"><i class="fas fa-undo-alt"></i> Сбросить к дефолтным примерам</button>
+        </div>
+        <div style="margin-top: 14px; font-size: 12px; color:#8a9bcf; text-align: right;"><i class="fas fa-shield-alt"></i> Изменения применятся для всех пользователей в реальном времени</div>
     </div>
 
-    <div id="admin-panel" class="admin-section hidden">
-        <h2>Управление кодом</h2>
-        <div class="admin-controls">
-            <select id="ai-selector">
-                <option value="copilot">Copilot</option>
-                <option value="grok">Grok</option>
-                <option value="perplexity">Perplexity</option>
-                <option value="claude">Claude</option>
-                <option value="chatgpt">ChatGPT</option>
-                <option value="alisa">Алиса AI</option>
-                <option value="gemini">Gemini</option>
-                <option value="deepseek">DeepSeek</option>
-            </select>
-            <textarea id="code-input" placeholder="Вставьте полный код здесь..."></textarea>
-            <button onclick="updateCode()" style="background: var(--accent); color: #000;">Обновить у всех</button>
-            <button onclick="document.getElementById('admin-panel').classList.add('hidden')" style="background: #555; color: #fff;">Закрыть</button>
-        </div>
-    </div>
-
-    <div class="grid" id="main-grid">
-        </div>
+    <!-- Сетка с карточками нейросетей (8 штук) -->
+    <div class="grid" id="neuralGrid"></div>
+    <footer>🔒 Каждый блок отображает код скрещённым стилем (line-through + крестовой узор). При нажатии «Копировать» — полный оригинальный код в буфер.</footer>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
+<script>
+    // -------------------- FIREBASE ИНИЦИАЛИЗАЦИЯ --------------------
     const firebaseConfig = {
         apiKey: "AIzaSyCMi3eKNZ4OgD2YCdhEFDOsmuclKZkjflo",
         authDomain: "from-b14b1.firebaseapp.com",
         projectId: "from-b14b1",
         storageBucket: "from-b14b1.firebasestorage.app",
         messagingSenderId: "604060443375",
-        appId: "1:604060443375:web:f6fc69f385a4c59ee3311a",
-        databaseURL: "https://from-b14b1-default-rtdb.firebaseio.com/" // Добавлен URL БД
+        appId: "1:604060443375:web:f6fc69f385a4c59ee3311a"
     };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const aiList = [
-        { id: 'copilot', name: 'Copilot' },
-        { id: 'grok', name: 'Grok' },
-        { id: 'perplexity', name: 'Perplexity' },
-        { id: 'claude', name: 'Claude' },
-        { id: 'chatgpt', name: 'ChatGPT' },
-        { id: 'alisa', name: 'Алиса AI' },
-        { id: 'gemini', name: 'Gemini' },
-        { id: 'deepseek', name: 'DeepSeek' }
-    ];
-
-    // Инициализация карточек на странице
-    const grid = document.getElementById('main-grid');
-    aiList.forEach(ai => {
-        const card = document.createElement('div');
-        card.className = 'ai-card';
-        card.innerHTML = `
-            <div class="ai-header">${ai.name}</div>
-            <div class="code-display" id="display-${ai.id}">Загрузка...</div>
-            <button class="copy-btn" onclick="copyFullCode('${ai.id}')">Копировать полный код</button>
-            <div class="status" id="status-${ai.id}"></div>
-        `;
-        grid.appendChild(card);
+    
+    // Инициализация Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Коллекция для кодов нейросетей (documents: id = имя нейросети)
+    // Для удобства: default коды (красивые примеры)
+    const DEFAULT_CODES = {
+        Copilot: `// GitHub Copilot — твой AI партнер
+function copilotSuggestion(question) {
+    return \`Ответ: \${question} решается с помощью AI\`;
+}
+console.log(copilotSuggestion("Как оптимизировать код?"));
+`,
+        Grok: `// Grok от xAI — глубокое понимание
+async function grokQuery(prompt) {
+    const response = await fetch('https://api.grok.ai/v1/complete', {
+        method: 'POST',
+        body: JSON.stringify({ input: prompt })
     });
-
-    // Хранилище кодов для копирования
-    const codeVault = {};
-
-    // Слушаем изменения в Firebase (Realtime)
-    const codesRef = ref(db, 'ai_codes');
-    onValue(codesRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        aiList.forEach(ai => {
-            const fullCode = data[ai.id] || "// Код еще не добавлен";
-            codeVault[ai.id] = fullCode;
-            document.getElementById(`display-${ai.id}`).innerText = fullCode;
-            document.getElementById(`status-${ai.id}`).innerText = "Обновлено: " + new Date().toLocaleTimeString();
-        });
+    return response.json();
+}`,
+        Perplexity: `// Perplexity — поиск и генерация
+const perplexitySearch = (query) => {
+    return new Promise((resolve) => {
+        resolve(\`Результат поиска по запросу: \${query}\`);
     });
-
-    // Функция обновления (для админа)
-    window.updateCode = function() {
-        const id = document.getElementById('ai-selector').value;
-        const newCode = document.getElementById('code-input').value;
-        
-        if(!newCode) return alert("Введите код!");
-
-        set(ref(db, 'ai_codes/' + id), newCode)
-            .then(() => {
-                alert("Код обновлен для всех пользователей!");
-                document.getElementById('code-input').value = "";
-            })
-            .catch(err => alert("Ошибка Firebase: " + err.message));
+};
+perplexitySearch("firebase integration").then(console.log);`,
+        Claude: `// Антропик Claude, безопасный ИИ
+class ClaudeAPI {
+    static async chat(messages) {
+        return { role: "assistant", content: "Твой ответ от Claude 3.5" };
+    }
+}
+export default ClaudeAPI;`,
+        ChatGPT: `// OpenAI ChatGPT (gpt-4-turbo)
+const chatGPT = async (userMessage) => {
+    const response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [{ role: "user", content: userMessage }]
+    });
+    return response.data.choices[0].message;
+};`,
+        "Алиса AI": `// Яндекс Алиса — голосовой ассистент
+function alisaHandler(text) {
+    const skills = { weather: "Сегодня солнечно", jokes: "Почему код смешной?" };
+    return skills[text] || "Не поняла запрос";
+}
+console.log(alisaHandler("weather"));`,
+        Gemini: `// Google Gemini мультимодальная модель
+import { GoogleGenerativeAI } from "@google/generative-ai";
+const genAI = new GoogleGenerativeAI("YOUR_API_KEY");
+async function geminiRun(prompt) {
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+}`,
+        DeepSeek: `// DeepSeek — сильный opensource код
+const deepseekInfer = (input) => {
+    // инференс глубокого поиска
+    return \`DeepSeek сгенерировал решение: \${input}\`;
+};
+deepseekInfer("Напиши HTML").then(console.log);`
     };
-
-    // Функция копирования
-    window.copyFullCode = function(id) {
-        const text = codeVault[id];
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Полный код " + id + " скопирован!");
-        });
-    };
-
-    // Простая проверка для админки
-    window.showAdmin = function() {
-        const pass = prompt("Введите пароль администратора:");
-        if (pass === "admin123") { // Замените на свой пароль
-            document.getElementById('admin-panel').classList.remove('hidden');
-        } else {
-            alert("Неверный пароль");
+    
+    // полный список нейросетей в порядке отображения
+    const NEURAL_NAMES = ["Copilot", "Grok", "Perplexity", "Claude", "ChatGPT", "Алиса AI", "Gemini", "DeepSeek"];
+    
+    // состояние текущих кодов (будет синхронизироваться с firestore)
+    let codesMap = { ...DEFAULT_CODES };
+    
+    // DOM элементы
+    const neuralGrid = document.getElementById("neuralGrid");
+    const publishBtn = document.getElementById("publishCodeBtn");
+    const resetDefaultBtn = document.getElementById("resetDefaultCodesBtn");
+    const aiSelectAdmin = document.getElementById("aiSelectAdmin");
+    const adminCodeInput = document.getElementById("adminCodeInput");
+    
+    // утилита для показа всплывающих сообщений
+    function showToast(message, isError = false) {
+        let toast = document.querySelector(".toast-msg");
+        if(toast) toast.remove();
+        const div = document.createElement("div");
+        div.className = "toast-msg";
+        div.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        div.style.backgroundColor = isError ? "#401a2c" : "#0F2D3A";
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 2800);
+    }
+    
+    // функция отрисовки карточек (синхронно с текущим codesMap)
+    function renderCards() {
+        if(!neuralGrid) return;
+        neuralGrid.innerHTML = "";
+        for(let name of NEURAL_NAMES) {
+            const fullCode = codesMap[name] || `// Код для ${name} пока не задан\nconsole.log("Hello from ${name}");`;
+            const card = document.createElement("div");
+            card.className = "ai-card";
+            card.setAttribute("data-ai", name);
+            // header
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="ai-name">${name}</span>
+                    <button class="copy-btn" data-ai-name="${name}"><i class="far fa-copy"></i> Копировать</button>
+                </div>
+                <div class="code-block" id="codeBlock-${name.replace(/\s/g, '')}">${escapeHtml(fullCode)}</div>
+                <div class="copy-tip"><i class="fas fa-exchange-alt"></i> Отображается скрещённо, но копируется полный рабочий код.</div>
+            `;
+            neuralGrid.appendChild(card);
         }
-    };
+        // навесить обработчики на кнопки копирования
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const aiName = btn.getAttribute('data-ai-name');
+                const originalCode = codesMap[aiName] || `// Код для ${aiName} недоступен`;
+                copyToClipboard(originalCode, aiName);
+            });
+        });
+    }
+    
+    // вспомогательная функция для экранирования HTML
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    
+    // копирование в буфер
+    async function copyToClipboard(text, aiName) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast(`✅ ${aiName} — полный код скопирован!`, false);
+        } catch(err) {
+            // fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast(`📋 ${aiName} скопирован (резервный способ)`, false);
+        }
+    }
+    
+    // --- Firestore синхронизация: прослушиваем изменения каждого документа ---
+    // для каждого нейм подписываемся на реальные обновления.
+    function subscribeToFirestoreUpdates() {
+        NEURAL_NAMES.forEach(aiName => {
+            const docRef = db.collection("neural_codes").doc(aiName);
+            docRef.onSnapshot((docSnap) => {
+                if(docSnap.exists) {
+                    const firestoreCode = docSnap.data().code;
+                    if(firestoreCode !== undefined && firestoreCode !== null) {
+                        // обновляем локальный мапу, если код изменился
+                        if(codesMap[aiName] !== firestoreCode) {
+                            codesMap[aiName] = firestoreCode;
+                            // перерисовываем карточки (только измененную? для простоты всю сетку)
+                            renderCards();
+                            showToast(`🔄 Обновлён код нейросети ${aiName} (live sync)`, false);
+                        }
+                    }
+                } else {
+                    // если документа нет - создадим с дефолтным при первой публикации либо если пусто
+                    if(!codesMap[aiName]) {
+                        // но во избежание гонки: просто создадим данные по умолчанию при первом обнаружении пустого
+                        docRef.set({ code: DEFAULT_CODES[aiName] || `// код по умолчанию для ${aiName}` })
+                            .catch(e => console.warn("set default error", e));
+                    }
+                }
+            }, (error) => {
+                console.warn(`Ошибка подписки ${aiName}:`, error);
+            });
+        });
+    }
+    
+    // Инициализация начальных данных: загрузка и установка слушателя.
+    // предварительно загружаем текущие значения из firestore один раз
+    async function loadInitialCodesFromFirestore() {
+        const promises = NEURAL_NAMES.map(async (aiName) => {
+            const docRef = db.collection("neural_codes").doc(aiName);
+            const doc = await docRef.get();
+            if(doc.exists) {
+                const savedCode = doc.data().code;
+                if(savedCode) codesMap[aiName] = savedCode;
+            } else {
+                // создаем документ с дефолтным кодом
+                await docRef.set({ code: DEFAULT_CODES[aiName] });
+                codesMap[aiName] = DEFAULT_CODES[aiName];
+            }
+        });
+        await Promise.all(promises);
+        renderCards();
+    }
+    
+    // Публикация кода для выбранной нейросети (админ-действие)
+    async function publishCodeForSelected() {
+        const selectedAi = aiSelectAdmin.value;
+        const newCode = adminCodeInput.value;
+        if(newCode.trim() === "") {
+            showToast("⚠️ Введите код перед публикацией!", true);
+            return;
+        }
+        try {
+            const docRef = db.collection("neural_codes").doc(selectedAi);
+            await docRef.set({ code: newCode });
+            // локальный мап обновится через onSnapshot, но для мгновенности можно обновить и вручную
+            codesMap[selectedAi] = newCode;
+            renderCards();
+            showToast(`✨ Код для ${selectedAi} обновлён во всех клиентах!`, false);
+            adminCodeInput.value = ""; // очистка
+        } catch(e) {
+            console.error(e);
+            showToast("Ошибка публикации: проверьте права Firebase", true);
+        }
+    }
+    
+    // Сброс всех кодов до DEFAULT_CODES
+    async function resetAllToDefault() {
+        try {
+            const batch = db.batch();
+            for(let name of NEURAL_NAMES) {
+                const docRef = db.collection("neural_codes").doc(name);
+                batch.set(docRef, { code: DEFAULT_CODES[name] });
+            }
+            await batch.commit();
+            showToast("♻️ Все коды сброшены к стандартным примерам", false);
+            // обновим локальный мап и рендер (snapshot подхватит, но для скорости вручную)
+            for(let name of NEURAL_NAMES) {
+                codesMap[name] = DEFAULT_CODES[name];
+            }
+            renderCards();
+        } catch(err) {
+            showToast("Ошибка сброса: " + err.message, true);
+        }
+    }
+    
+    // заполнить поле админа текущим кодом при выборе нейросети в селекте
+    function updateAdminTextareaWithCurrent() {
+        const selected = aiSelectAdmin.value;
+        const currentCode = codesMap[selected] || "";
+        adminCodeInput.value = currentCode;
+    }
+    
+    // --- регистрация событий ---
+    publishBtn.addEventListener("click", publishCodeForSelected);
+    resetDefaultBtn.addEventListener("click", resetAllToDefault);
+    aiSelectAdmin.addEventListener("change", updateAdminTextareaWithCurrent);
+    
+    // Старт приложения: инициализация + подписка + обновление
+    async function init() {
+        await loadInitialCodesFromFirestore(); // заполнит codesMap и создаст документы
+        subscribeToFirestoreUpdates(); // подписка в реальном времени
+        // дополнительно обновим текстовое поле при старте
+        updateAdminTextareaWithCurrent();
+    }
+    
+    init().catch(err => {
+        console.error("Ошибка инициализации Firestore:", err);
+        // fallback: рендер дефолтных, но без live sync (но ошибка конфига?)
+        codesMap = { ...DEFAULT_CODES };
+        renderCards();
+        showToast("⚠️ Ошибка подключения Firebase, но локальный режим работает", true);
+    });
 </script>
-
 </body>
 </html>
