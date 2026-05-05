@@ -1,1 +1,120 @@
-д
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Code Hub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .ai-card {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .ai-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #bb86fc;
+        }
+        .code-block {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap; /* "Скрещенный" вид - в одну строку */
+            margin-bottom: 10px;
+            border: 1px solid #444;
+        }
+        .copy-btn {
+            background-color: #03dac6;
+            color: #000;
+            border: none;
+            padding: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .copy-btn:hover {
+            background-color: #018786;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">AI Code Dashboard</h1>
+    
+    <div class="grid-container">
+        <script>
+            const ais = [
+                { name: "Copilot", code: "// Full Copilot Logic here...\nfunction copilot() { return true; }" },
+                { name: "Grok", code: "print('Grok full source code')" },
+                { name: "Perplexity", code: "const perplexity = () => 'searching...';" },
+                { name: "Claude", code: "def claude_logic():\n    pass" },
+                { name: "ChatGPT", code: "console.log('OpenAI Full Code');" },
+                { name: "Алиса AI", code: "say('Привет, я полный код Алисы')" },
+                { name: "Gemini", code: "export const gemini = { power: 9000 };" },
+                { name: "DeepSeek", code: "System.out.println('DeepSeek Full Access');" }
+            ];
+
+            const container = document.querySelector('.grid-container');
+
+            ais.forEach(ai => {
+                const card = document.createElement('div');
+                card.className = 'ai-card';
+                card.innerHTML = `
+                    <div class="ai-name">${ai.name}</div>
+                    <div class="code-block" title="Полный код скрыт">${ai.code}</div>
+                    <button class="copy-btn" onclick="copyCode('${encodeURIComponent(ai.code)}')">Копировать полный код</button>
+                `;
+                container.appendChild(card);
+            });
+
+            function copyCode(encodedCode) {
+                const fullCode = decodeURIComponent(encodedCode);
+                navigator.clipboard.writeText(fullCode).then(() => {
+                    alert("Код скопирован!");
+                });
+            }
+        </script>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMi3eKNZ4OgD2YCdhEFDOsmuclKZkjflo",
+            authDomain: "from-b14b1.firebaseapp.com",
+            projectId: "from-b14b1",
+            storageBucket: "from-b14b1.firebasestorage.app",
+            messagingSenderId: "604060443375",
+            appId: "1:604060443375:web:f6fc69f385a4c59ee3311a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        console.log("Firebase initialized for project: " + firebaseConfig.projectId);
+    </script>
+
+</body>
+</html>
+
