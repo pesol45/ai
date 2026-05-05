@@ -3,118 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Code Hub</title>
+    <title>AI Code Hub - Realtime</title>
     <style>
+        :root {
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --accent: #bb86fc;
+            --secondary: #03dac6;
+            --text: #e0e0e0;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
             padding: 20px;
         }
-        .grid-container {
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Сетка нейросетей */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin-top: 30px;
         }
+
         .ai-card {
-            background: #1e1e1e;
-            border-radius: 12px;
-            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
             border: 1px solid #333;
-            display: flex;
-            flex-direction: column;
+            transition: transform 0.2s;
         }
-        .ai-name {
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 10px;
-            color: #bb86fc;
+            color: var(--accent);
         }
-        .code-block {
+
+        /* "Скрещенный" вид кода */
+        .code-display {
             background: #000;
-            color: #0f0;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9rem;
+            color: #50fa7b;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap; /* "Скрещенный" вид - в одну строку */
-            margin-bottom: 10px;
-            border: 1px solid #444;
+            white-space: nowrap; /* Сжимаем в одну строку */
+            border: 1px solid #222;
+            margin-bottom: 15px;
         }
-        .copy-btn {
-            background-color: #03dac6;
-            color: #000;
+
+        button {
+            width: 100%;
+            padding: 10px;
             border: none;
-            padding: 8px;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
             transition: 0.3s;
         }
-        .copy-btn:hover {
-            background-color: #018786;
+
+        .copy-btn { background: var(--secondary); color: #000; }
+        .copy-btn:hover { opacity: 0.8; }
+
+        /* Админ-панель */
+        .admin-section {
+            background: #252525;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border: 2px dashed var(--accent);
         }
+
+        .admin-section h2 { margin-top: 0; color: var(--accent); }
+        
+        .admin-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        select, textarea, input {
+            background: #121212;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        textarea { min-height: 100px; resize: vertical; }
+
+        .hidden { display: none; }
+        
+        .status { font-size: 0.8rem; margin-top: 5px; color: #888; }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align: center;">AI Code Dashboard</h1>
-    
-    <div class="grid-container">
-        <script>
-            const ais = [
-                { name: "Copilot", code: "// Full Copilot Logic here...\nfunction copilot() { return true; }" },
-                { name: "Grok", code: "print('Grok full source code')" },
-                { name: "Perplexity", code: "const perplexity = () => 'searching...';" },
-                { name: "Claude", code: "def claude_logic():\n    pass" },
-                { name: "ChatGPT", code: "console.log('OpenAI Full Code');" },
-                { name: "Алиса AI", code: "say('Привет, я полный код Алисы')" },
-                { name: "Gemini", code: "export const gemini = { power: 9000 };" },
-                { name: "DeepSeek", code: "System.out.println('DeepSeek Full Access');" }
-            ];
+<div class="container">
+    <h1>AI Code Realtime Hub</h1>
 
-            const container = document.querySelector('.grid-container');
-
-            ais.forEach(ai => {
-                const card = document.createElement('div');
-                card.className = 'ai-card';
-                card.innerHTML = `
-                    <div class="ai-name">${ai.name}</div>
-                    <div class="code-block" title="Полный код скрыт">${ai.code}</div>
-                    <button class="copy-btn" onclick="copyCode('${encodeURIComponent(ai.code)}')">Копировать полный код</button>
-                `;
-                container.appendChild(card);
-            });
-
-            function copyCode(encodedCode) {
-                const fullCode = decodeURIComponent(encodedCode);
-                navigator.clipboard.writeText(fullCode).then(() => {
-                    alert("Код скопирован!");
-                });
-            }
-        </script>
+    <div id="login-zone">
+        <button onclick="showAdmin()" style="width: auto; background: #333; color: #ccc;">Войти в Админку</button>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyCMi3eKNZ4OgD2YCdhEFDOsmuclKZkjflo",
-            authDomain: "from-b14b1.firebaseapp.com",
-            projectId: "from-b14b1",
-            storageBucket: "from-b14b1.firebasestorage.app",
-            messagingSenderId: "604060443375",
-            appId: "1:604060443375:web:f6fc69f385a4c59ee3311a"
-        };
+    <div id="admin-panel" class="admin-section hidden">
+        <h2>Управление кодом</h2>
+        <div class="admin-controls">
+            <select id="ai-selector">
+                <option value="copilot">Copilot</option>
+                <option value="grok">Grok</option>
+                <option value="perplexity">Perplexity</option>
+                <option value="claude">Claude</option>
+                <option value="chatgpt">ChatGPT</option>
+                <option value="alisa">Алиса AI</option>
+                <option value="gemini">Gemini</option>
+                <option value="deepseek">DeepSeek</option>
+            </select>
+            <textarea id="code-input" placeholder="Вставьте полный код здесь..."></textarea>
+            <button onclick="updateCode()" style="background: var(--accent); color: #000;">Обновить у всех</button>
+            <button onclick="document.getElementById('admin-panel').classList.add('hidden')" style="background: #555; color: #fff;">Закрыть</button>
+        </div>
+    </div>
 
-        const app = initializeApp(firebaseConfig);
-        console.log("Firebase initialized for project: " + firebaseConfig.projectId);
-    </script>
+    <div class="grid" id="main-grid">
+        </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMi3eKNZ4OgD2YCdhEFDOsmuclKZkjflo",
+        authDomain: "from-b14b1.firebaseapp.com",
+        projectId: "from-b14b1",
+        storageBucket: "from-b14b1.firebasestorage.app",
+        messagingSenderId: "604060443375",
+        appId: "1:604060443375:web:f6fc69f385a4c59ee3311a",
+        databaseURL: "https://from-b14b1-default-rtdb.firebaseio.com/" // Добавлен URL БД
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const aiList = [
+        { id: 'copilot', name: 'Copilot' },
+        { id: 'grok', name: 'Grok' },
+        { id: 'perplexity', name: 'Perplexity' },
+        { id: 'claude', name: 'Claude' },
+        { id: 'chatgpt', name: 'ChatGPT' },
+        { id: 'alisa', name: 'Алиса AI' },
+        { id: 'gemini', name: 'Gemini' },
+        { id: 'deepseek', name: 'DeepSeek' }
+    ];
+
+    // Инициализация карточек на странице
+    const grid = document.getElementById('main-grid');
+    aiList.forEach(ai => {
+        const card = document.createElement('div');
+        card.className = 'ai-card';
+        card.innerHTML = `
+            <div class="ai-header">${ai.name}</div>
+            <div class="code-display" id="display-${ai.id}">Загрузка...</div>
+            <button class="copy-btn" onclick="copyFullCode('${ai.id}')">Копировать полный код</button>
+            <div class="status" id="status-${ai.id}"></div>
+        `;
+        grid.appendChild(card);
+    });
+
+    // Хранилище кодов для копирования
+    const codeVault = {};
+
+    // Слушаем изменения в Firebase (Realtime)
+    const codesRef = ref(db, 'ai_codes');
+    onValue(codesRef, (snapshot) => {
+        const data = snapshot.val() || {};
+        aiList.forEach(ai => {
+            const fullCode = data[ai.id] || "// Код еще не добавлен";
+            codeVault[ai.id] = fullCode;
+            document.getElementById(`display-${ai.id}`).innerText = fullCode;
+            document.getElementById(`status-${ai.id}`).innerText = "Обновлено: " + new Date().toLocaleTimeString();
+        });
+    });
+
+    // Функция обновления (для админа)
+    window.updateCode = function() {
+        const id = document.getElementById('ai-selector').value;
+        const newCode = document.getElementById('code-input').value;
+        
+        if(!newCode) return alert("Введите код!");
+
+        set(ref(db, 'ai_codes/' + id), newCode)
+            .then(() => {
+                alert("Код обновлен для всех пользователей!");
+                document.getElementById('code-input').value = "";
+            })
+            .catch(err => alert("Ошибка Firebase: " + err.message));
+    };
+
+    // Функция копирования
+    window.copyFullCode = function(id) {
+        const text = codeVault[id];
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Полный код " + id + " скопирован!");
+        });
+    };
+
+    // Простая проверка для админки
+    window.showAdmin = function() {
+        const pass = prompt("Введите пароль администратора:");
+        if (pass === "admin123") { // Замените на свой пароль
+            document.getElementById('admin-panel').classList.remove('hidden');
+        } else {
+            alert("Неверный пароль");
+        }
+    };
+</script>
 
 </body>
 </html>
-
