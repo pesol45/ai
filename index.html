@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>AI Nexus: Код-центр нейросетей | Скролл внутри блоков</title>
+    <title>AI Nexus: Оценки нейросетей + Код-центр</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -28,7 +28,6 @@
             margin: 0 auto;
         }
 
-        /* заголовок */
         h1 {
             font-size: 2.5rem;
             font-weight: 800;
@@ -63,7 +62,6 @@
             padding: 22px 28px;
             margin-bottom: 48px;
             box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.6);
-            transition: 0.2s;
         }
 
         .admin-header {
@@ -125,7 +123,6 @@
             color: white;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .textarea-wrap {
@@ -227,11 +224,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 22px 8px 24px;
+            padding: 18px 22px 8px 24px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .ai-name {
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             font-weight: 800;
             background: linear-gradient(145deg, #F0F5FF, #BACEFF);
             -webkit-background-clip: text;
@@ -243,25 +242,80 @@
         .copy-btn {
             background: #111c30;
             border-radius: 50px;
-            padding: 8px 18px;
-            font-size: 0.8rem;
+            padding: 6px 16px;
+            font-size: 0.75rem;
             font-weight: 500;
-            gap: 8px;
-            transition: 0.15s;
+            gap: 6px;
         }
 
-        .copy-btn i {
-            font-size: 0.9rem;
+        /* Рейтинговая звездная секция */
+        .rating-section {
+            padding: 8px 22px 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid #1e2a46;
+            margin-bottom: 8px;
         }
 
-        /* БЛОК КОДА С ПРОКРУТКОЙ — главное изменение */
+        .stars-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #0f1628;
+            padding: 6px 14px;
+            border-radius: 60px;
+        }
+
+        .stars-container span {
+            font-size: 0.7rem;
+            color: #9aa9c9;
+            margin-right: 6px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .star-rating i {
+            font-size: 1rem;
+            color: #4a5578;
+            transition: 0.1s;
+        }
+
+        .star-rating i.filled {
+            color: #FFD966;
+            text-shadow: 0 0 4px #ffb347;
+        }
+
+        .star-rating i:hover {
+            transform: scale(1.1);
+        }
+
+        .rating-value {
+            font-weight: 700;
+            background: #1A2542;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+        }
+
+        .rating-value i {
+            margin-right: 4px;
+            color: gold;
+        }
+
+        /* Блок кода с прокруткой */
         .code-scroll-container {
-            margin: 18px 20px 16px 20px;
+            margin: 14px 20px 12px 20px;
             background: #01060f;
             border-radius: 24px;
             border: 1px solid #293a60;
             position: relative;
-            /* скрещённый стиль сохраняем: перечеркнутый + узор */
             text-decoration: line-through;
             text-decoration-thickness: 2px;
             text-decoration-color: #ff6b8aa0;
@@ -269,24 +323,21 @@
             background-image: repeating-linear-gradient(45deg, rgba(255, 80, 120, 0.08) 0px, rgba(255, 80, 120, 0.08) 2px, transparent 2px, transparent 8px);
         }
 
-        /* сам код с прокруткой */
         .code-pre {
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
-            padding: 16px 18px;
+            padding: 14px 16px;
             font-family: 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             line-height: 1.5;
             white-space: pre-wrap;
             word-break: break-word;
             color: #d6e5ff;
             scrollbar-width: thin;
-            scrollbar-color: #4d6b9e #0a1222;
         }
 
         .code-pre::-webkit-scrollbar {
             width: 6px;
-            height: 6px;
         }
 
         .code-pre::-webkit-scrollbar-track {
@@ -299,34 +350,27 @@
             border-radius: 10px;
         }
 
-        /* крестиковый эффект поверх */
         .code-scroll-container::before {
             content: "✗ ✗ ✗";
             position: absolute;
             bottom: 6px;
             right: 12px;
-            font-size: 26px;
+            font-size: 22px;
             opacity: 0.2;
             color: #ff9faa;
             pointer-events: none;
             font-weight: bold;
-            font-family: monospace;
-            z-index: 2;
-        }
-
-        .code-scroll-container:hover::before {
-            opacity: 0.35;
         }
 
         .copy-tip {
-            margin: 0 20px 20px 20px;
-            font-size: 0.7rem;
+            margin: 0 20px 18px 20px;
+            font-size: 0.65rem;
             color: #7b8bb0;
             display: flex;
             align-items: center;
             gap: 8px;
             border-top: 1px dashed #1e2a46;
-            padding-top: 12px;
+            padding-top: 10px;
         }
 
         .toast-msg {
@@ -357,21 +401,18 @@
             .grid {
                 grid-template-columns: 1fr;
             }
-            .admin-header h2 {
-                font-size: 1rem;
-            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>⚡ AI VAULT — КОДЫ НЕЙРОСЕТЕЙ ⚡</h1>
-    <div style="text-align: center;"><span class="sub"><i class="fas fa-mouse"></i> Полный код — скролл внутри блока · копируется полностью</span></div>
+    <h1>🧠 AI ARENA — ОЦЕНКИ И КОДЫ 🧠</h1>
+    <div style="text-align: center;"><span class="sub"><i class="fas fa-star"></i> Оцените каждую нейросеть от 1 до 10 · Оценки видны всем · Код со скроллом</span></div>
 
     <!-- Админ-панель -->
     <div class="admin-panel">
         <div class="admin-header">
-            <h2><i class="fas fa-hammer"></i> Админ-панель</h2>
+            <h2><i class="fas fa-hammer"></i> Админ-панель (управление кодом)</h2>
             <div class="secret-badge"><i class="fas fa-fire"></i> Firebase realtime sync</div>
         </div>
         <div class="field-group">
@@ -389,20 +430,20 @@
                 </select>
             </div>
             <div class="textarea-wrap">
-                <label><i class="fas fa-code"></i> Полный код (будет отображаться со скроллом и перечёркнуто)</label>
-                <textarea id="adminCodeInput" rows="3" placeholder="Вставьте любой код — например, async function fetchAI() { ... }"></textarea>
+                <label><i class="fas fa-code"></i> Полный код (отображается со скроллом / перечёркнуто)</label>
+                <textarea id="adminCodeInput" rows="3" placeholder="Вставьте код нейросети..."></textarea>
             </div>
         </div>
         <div class="admin-actions">
             <button id="publishCodeBtn" class="primary"><i class="fas fa-upload"></i> Опубликовать код</button>
-            <button id="resetDefaultCodesBtn" class="danger"><i class="fas fa-refresh"></i> Сбросить дефолтные</button>
+            <button id="resetDefaultCodesBtn" class="danger"><i class="fas fa-refresh"></i> Сбросить дефолтные коды</button>
         </div>
-        <div style="margin-top: 16px; font-size: 12px; opacity: 0.7; text-align: right;"><i class="fas fa-globe"></i> Изменения видны всем пользователям в реальном времени</div>
+        <div style="margin-top: 16px; font-size: 12px; opacity: 0.7; text-align: right;"><i class="fas fa-globe"></i> Коды и оценки синхронизируются мгновенно у всех пользователей</div>
     </div>
 
     <!-- Сетка нейросетей -->
     <div class="grid" id="neuralGrid"></div>
-    <footer><i class="fas fa-arrows-alt"></i> ↕️ Прокрутите внутри каждого кода, чтобы увидеть полную версию. Кнопка "Копировать" сохраняет весь оригинальный текст без искажений.</footer>
+    <footer><i class="fas fa-arrows-alt"></i> ↕️ Прокрутите внутри блока кода · Оценки от 1 до 10 — нажмите на звёзды или введите число · Данные в Firestore</footer>
 </div>
 
 <script>
@@ -419,11 +460,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // ДЕФОЛТНЫЕ РАСШИРЕННЫЕ ПРИМЕРЫ (полные и интересные, чтобы был смысл скроллить)
+    // Дефолтные коды (расширенные примеры)
     const DEFAULT_CODES = {
         Copilot: `// 🤖 GitHub Copilot — AI пары для кода
-import openai from 'copilot-api';
-
 async function generateCompletion(prompt) {
     const response = await openai.Completion.create({
         model: "code-cushman-001",
@@ -433,129 +472,85 @@ async function generateCompletion(prompt) {
     });
     return response.choices[0].text.trim();
 }
-
-// Пример интеграции в редактор
-const suggestion = await generateCompletion("function fibonacci");
-console.log(suggestion);`,
-        Grok: `// Grok от xAI — глубокое аналитическое мышление
+console.log(await generateCompletion("fibonacci function"));`,
+        Grok: `// Grok от xAI — аналитический ИИ
 class GrokReasoning {
-    constructor(apiKey) {
-        this.key = apiKey;
-        this.baseURL = "https://api.grok.ai/v1/inference";
-    }
-    
     async think(question) {
-        const payload = { query: question, reasoning_depth: "deep" };
-        const resp = await fetch(this.baseURL, {
+        const resp = await fetch("https://api.grok.ai/v1/inference", {
             method: 'POST',
-            headers: { 'Authorization': \`Bearer \${this.key}\` },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ query: question })
         });
-        const data = await resp.json();
-        return data.explanation;
+        return resp.json();
     }
 }
-
-// Использование
-const grok = new GrokReasoning("GROK_KEY");
-grok.think("Почему код должен быть масштабируемым?").then(console.log);`,
-        Perplexity: `// Perplexity AI — поиск + синтез знаний
-const perplexityQuery = async (userQuery) => {
+const grok = new GrokReasoning();
+grok.think("Будущее AGI").then(console.log);`,
+        Perplexity: `// Perplexity AI — поиск + синтез
+const perplexityQuery = async (query) => {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_KEY' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             model: 'pplx-7b-online',
-            messages: [{ role: 'user', content: userQuery }]
+            messages: [{ role: 'user', content: query }]
         })
     });
-    const json = await response.json();
-    return json.choices[0].message.content;
-};
-
-// Пример реального вызова
-perplexityQuery("Объясни концепцию реактивности в JS").then(console.log);`,
+    return response.json();
+};`,
         Claude: `// Claude 3.5 Sonnet (Anthropic)
 const { Anthropic } = require('@anthropic-ai/sdk');
-const claude = new Anthropic({ apiKey: 'sk-ant-api03...' });
-
-async function getClaudeInsight(messages) {
+const claude = new Anthropic({ apiKey: 'sk-ant-api...' });
+async function getClaude(prompt) {
     const msg = await claude.messages.create({
         model: "claude-3-5-sonnet-20241022",
-        max_tokens: 1024,
-        messages: messages,
-        system: "Ты эксперт по архитектуре софта."
+        messages: [{ role: "user", content: prompt }]
     });
     return msg.content[0].text;
-}
-
-getClaudeInsight([{ role: "user", content: "Как организовать чистую архитектуру?" }]);`,
-        ChatGPT: `// OpenAI ChatGPT (GPT-4 Turbo)
+}`,
+        ChatGPT: `// OpenAI ChatGPT GPT-4 Turbo
 import OpenAI from 'openai';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-async function chatGPTResponse(prompt) {
+async function chat(prompt) {
     const completion = await openai.chat.completions.create({
         model: "gpt-4-turbo",
-        messages: [
-            { role: "system", content: "Ты помощник-разработчик" },
-            { role: "user", content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 800,
+        messages: [{ role: "user", content: prompt }]
     });
     return completion.choices[0].message.content;
-}
-
-chatGPTResponse("Напиши функцию debounce").then(console.log);`,
-        "Алиса AI": `// Яндекс Алиса — голосовой AI с навыками
-function alisaSmartReply(intent, entities) {
+}`,
+        "Алиса AI": `// Яндекс Алиса — смарт-ассистент
+function alisaHandler(intent) {
     const actions = {
-        'weather': () => 'Сегодня +22, солнечно',
-        'joke': () => 'Почему программисты любят dark mode? Потому что свет привлекает баги!',
-        'code_help': () => 'Используй map вместо forEach для трансформаций'
+        'weather': 'Солнечно, +22°C',
+        'joke': 'Почему программисты любят кофе? Потому что код без него не компилится!'
     };
-    return actions[intent] ? actions[intent]() : 'Я вас не поняла, переформулируйте.';
-}
-
-// Внедрение в диалог
-console.log(alisaSmartReply('joke', null));`,
-        Gemini: `// Google Gemini Pro — мультимодальные возможности
+    return actions[intent] || 'Не поняла запрос';
+}`,
+        Gemini: `// Google Gemini Pro
 import { GoogleGenerativeAI } from "@google/generative-ai";
-const genAI = new GoogleGenerativeAI("GEMINI_API_KEY");
-
-async function geminiGenerate(prompt) {
+const genAI = new GoogleGenerativeAI("GEMINI_KEY");
+async function geminiRun(prompt) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.9, maxOutputTokens: 1000 }
-    });
+    const result = await model.generateContent(prompt);
     return result.response.text();
-}
-
-geminiGenerate("Как работает attention механизм").then(console.log);`,
-        DeepSeek: `// DeepSeek Coder — мощный open-source LLM
+}`,
+        DeepSeek: `// DeepSeek Coder 33B
 const deepseekEndpoint = "https://api.deepseek.com/v1/chat/completions";
-
-async function deepSeekInference(codePrompt) {
+async function deepSeekInfer(codePrompt) {
     const res = await fetch(deepseekEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer DEEPSEEK_KEY' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             model: "deepseek-coder-33b-instruct",
-            messages: [{ role: "user", content: codePrompt }],
-            temperature: 0.2
+            messages: [{ role: "user", content: codePrompt }]
         })
     });
-    const data = await res.json();
-    return data.choices[0].message.content;
-}
-
-deepSeekInference("Оптимизируй этот SQL запрос").then(console.log);`
+    return res.json();
+}`
     };
     
     const NEURAL_NAMES = ["Copilot", "Grok", "Perplexity", "Claude", "ChatGPT", "Алиса AI", "Gemini", "DeepSeek"];
     let codesMap = { ...DEFAULT_CODES };
+    let ratingsMap = {};   // { "Copilot": 8, ... }
     
     // DOM
     const neuralGrid = document.getElementById("neuralGrid");
@@ -564,7 +559,6 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
     const aiSelectAdmin = document.getElementById("aiSelectAdmin");
     const adminCodeInput = document.getElementById("adminCodeInput");
     
-    // утилиты
     function showToast(message, isErr = false) {
         let toast = document.querySelector(".toast-msg");
         if(toast) toast.remove();
@@ -577,7 +571,7 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
     }
     
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
+        return str.replace(/[&<>]/g, (m) => {
             if(m === '&') return '&amp;';
             if(m === '<') return '&lt;';
             if(m === '>') return '&gt;';
@@ -585,12 +579,12 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
         });
     }
     
-    // Копирование в буфер
+    // Скопировать код
     async function copyFullCode(aiName) {
         const originalCode = codesMap[aiName] || `// Код для ${aiName} отсутствует`;
         try {
             await navigator.clipboard.writeText(originalCode);
-            showToast(`✅ ${aiName} — полный код скопирован (${originalCode.length} символов)`);
+            showToast(`✅ ${aiName} — полный код скопирован (${originalCode.length} симв.)`);
         } catch (err) {
             const textarea = document.createElement('textarea');
             textarea.value = originalCode;
@@ -598,36 +592,94 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            showToast(`📋 ${aiName} скопирован резервным способом`);
+            showToast(`📋 ${aiName} скопирован`);
         }
     }
     
-    // Отрисовка карточек (с прокруткой)
+    // Установка рейтинга (1-10)
+    async function setRating(aiName, newRating) {
+        let ratingValue = Math.min(10, Math.max(1, Math.floor(Number(newRating))));
+        if(isNaN(ratingValue)) ratingValue = 5;
+        try {
+            await db.collection("neural_ratings").doc(aiName).set({ rating: ratingValue });
+            // и сразу локально обновим и перерисуем звезды (без полного рендера используем обновление конкретной карточки)
+            ratingsMap[aiName] = ratingValue;
+            updateRatingUI(aiName, ratingValue);
+            showToast(`⭐ ${aiName} — оценка ${ratingValue}/10`, false);
+        } catch(e) {
+            showToast("Ошибка сохранения оценки", true);
+        }
+    }
+    
+    // Обновить интерфейс звёзд / текста для конкретной карточки
+    function updateRatingUI(aiName, ratingValue) {
+        const card = document.querySelector(`.ai-card[data-ai-id="${aiName}"]`);
+        if(!card) return;
+        const ratingContainer = card.querySelector('.star-rating');
+        const ratingValueSpan = card.querySelector('.rating-value span');
+        if(ratingContainer && ratingValueSpan) {
+            // обновляем звёздочки (от 1 до 10 -> заполненные звезды = округление до 5?)
+            // покажем 10 звезд (макс 10) — каждая звезда соответствует 1 баллу
+            const stars = ratingContainer.querySelectorAll('i');
+            for(let i = 0; i < stars.length; i++) {
+                if(i < ratingValue) stars[i].classList.add('filled');
+                else stars[i].classList.remove('filled');
+            }
+            ratingValueSpan.innerText = ratingValue;
+        }
+    }
+    
+    // генерируем HTML для рейтинга (10 звезд)
+    function generateRatingHTML(aiName, currentRating) {
+        let starsHtml = '';
+        for(let i = 1; i <= 10; i++) {
+            const filledClass = (i <= currentRating) ? 'filled' : '';
+            starsHtml += `<i class="fas fa-star ${filledClass}" data-star-value="${i}"></i>`;
+        }
+        return `
+            <div class="rating-section">
+                <div class="stars-container">
+                    <span><i class="fas fa-chart-line"></i> Оценить:</span>
+                    <div class="star-rating" data-ai-rating="${aiName}">
+                        ${starsHtml}
+                    </div>
+                </div>
+                <div class="rating-value">
+                    <i class="fas fa-medal"></i> <span>${currentRating}</span> / 10
+                </div>
+            </div>
+        `;
+    }
+    
+    // Полная отрисовка карточек (код + рейтинг)
     function renderCards() {
         if (!neuralGrid) return;
         neuralGrid.innerHTML = "";
         for (let name of NEURAL_NAMES) {
-            const fullRawCode = codesMap[name] || `// ⚠️ Код для ${name} не найден\nconsole.log("обновите через админку");`;
+            const fullRawCode = codesMap[name] || `// Код для ${name} не задан`;
             const escapedCode = escapeHtml(fullRawCode);
+            const currentRating = ratingsMap[name] !== undefined ? ratingsMap[name] : 5; // по умолчанию 5
             const card = document.createElement("div");
             card.className = "ai-card";
             card.setAttribute("data-ai-id", name);
             card.innerHTML = `
                 <div class="card-header">
                     <span class="ai-name">${name}</span>
-                    <button class="copy-btn" data-ai-name="${name}"><i class="far fa-copy"></i> Копировать</button>
+                    <button class="copy-btn" data-ai-name="${name}"><i class="far fa-copy"></i> Копировать код</button>
                 </div>
+                ${generateRatingHTML(name, currentRating)}
                 <div class="code-scroll-container">
                     <div class="code-pre">${escapedCode}</div>
                 </div>
                 <div class="copy-tip">
                     <i class="fas fa-mouse"></i> <span>Прокрутите внутри блока (колесико мыши) — полный код!</span>
-                    <i class="fas fa-exchange-alt" style="margin-left:auto;"></i>
+                    <i class="fas fa-star-of-life" style="margin-left:auto;"></i>
                 </div>
             `;
             neuralGrid.appendChild(card);
         }
-        // вешаем обработчики на все кнопки копирования
+        
+        // Навесить события копирования
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -635,49 +687,93 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
                 copyFullCode(aiName);
             });
         });
-    }
-    
-    // --- Firebase: живая синхронизация ---
-    function subscribeFirestore() {
-        NEURAL_NAMES.forEach(aiName => {
-            const docRef = db.collection("neural_codes").doc(aiName);
-            docRef.onSnapshot((docSnap) => {
-                if (docSnap.exists) {
-                    const firestoreVal = docSnap.data().code;
-                    if (firestoreVal !== undefined && codesMap[aiName] !== firestoreVal) {
-                        codesMap[aiName] = firestoreVal;
-                        renderCards();
-                        showToast(`🔄 синхронизация: ${aiName} обновлён`, false);
-                    }
-                } else {
-                    // создаём документ с дефолтом
-                    docRef.set({ code: DEFAULT_CODES[aiName] }).catch(console.warn);
-                    if (!codesMap[aiName]) codesMap[aiName] = DEFAULT_CODES[aiName];
-                }
-            }, (err) => {
-                console.warn(`Ошибка подписки ${aiName}`, err);
+        
+        // Навесить события кликов на звёзды
+        document.querySelectorAll('.star-rating').forEach(starContainer => {
+            const aiName = starContainer.getAttribute('data-ai-rating');
+            const stars = starContainer.querySelectorAll('i');
+            stars.forEach(star => {
+                star.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const starValue = parseInt(star.getAttribute('data-star-value'), 10);
+                    setRating(aiName, starValue);
+                });
             });
         });
     }
     
-    // первичная загрузка данных
+    // Обновить конкретную карточку (код + рейтинг) без полной перерисовки (оптимизация)
+    function fullReRender() {
+        renderCards(); // полный рендер, все подписки обновятся заново
+    }
+    
+    // --- Firebase: слушатели кодов и рейтингов ---
+    function subscribeFirestore() {
+        // Слушаем коды
+        NEURAL_NAMES.forEach(aiName => {
+            const codeRef = db.collection("neural_codes").doc(aiName);
+            codeRef.onSnapshot((docSnap) => {
+                if (docSnap.exists) {
+                    const firestoreVal = docSnap.data().code;
+                    if (firestoreVal !== undefined && codesMap[aiName] !== firestoreVal) {
+                        codesMap[aiName] = firestoreVal;
+                        fullReRender();
+                        showToast(`🔄 Код нейросети ${aiName} обновлён`, false);
+                    }
+                } else {
+                    codeRef.set({ code: DEFAULT_CODES[aiName] }).catch(console.warn);
+                    if (!codesMap[aiName]) codesMap[aiName] = DEFAULT_CODES[aiName];
+                }
+            });
+        });
+        
+        // Слушаем рейтинги
+        NEURAL_NAMES.forEach(aiName => {
+            const ratingRef = db.collection("neural_ratings").doc(aiName);
+            ratingRef.onSnapshot((docSnap) => {
+                if (docSnap.exists) {
+                    const newRating = docSnap.data().rating;
+                    if (newRating !== undefined && ratingsMap[aiName] !== newRating) {
+                        ratingsMap[aiName] = newRating;
+                        updateRatingUI(aiName, newRating);
+                        showToast(`⭐ Обновлён рейтинг ${aiName}: ${newRating}/10`, false);
+                    }
+                } else {
+                    // установим дефолтный рейтинг 5
+                    ratingRef.set({ rating: 5 }).catch(console.warn);
+                    ratingsMap[aiName] = 5;
+                }
+            });
+        });
+    }
+    
+    // первичная загрузка кодов и рейтингов
     async function loadInitial() {
-        const promises = NEURAL_NAMES.map(async (name) => {
+        // загружаем коды
+        const codePromises = NEURAL_NAMES.map(async (name) => {
             const docRef = db.collection("neural_codes").doc(name);
             const snap = await docRef.get();
-            if (snap.exists) {
-                const savedCode = snap.data().code;
-                if (savedCode) codesMap[name] = savedCode;
-            } else {
+            if (snap.exists) codesMap[name] = snap.data().code;
+            else {
                 await docRef.set({ code: DEFAULT_CODES[name] });
                 codesMap[name] = DEFAULT_CODES[name];
             }
         });
-        await Promise.all(promises);
+        // загружаем рейтинги
+        const ratingPromises = NEURAL_NAMES.map(async (name) => {
+            const ratingRef = db.collection("neural_ratings").doc(name);
+            const snap = await ratingRef.get();
+            if (snap.exists) ratingsMap[name] = snap.data().rating;
+            else {
+                await ratingRef.set({ rating: 5 });
+                ratingsMap[name] = 5;
+            }
+        });
+        await Promise.all([...codePromises, ...ratingPromises]);
         renderCards();
     }
     
-    // админка: публикация
+    // админка: публикация кода
     async function publishCode() {
         const selected = aiSelectAdmin.value;
         const newCode = adminCodeInput.value;
@@ -688,8 +784,8 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
         try {
             await db.collection("neural_codes").doc(selected).set({ code: newCode });
             codesMap[selected] = newCode;
-            renderCards();
-            showToast(`✨ Код для ${selected} успешно опубликован и синхронизирован!`);
+            fullReRender();
+            showToast(`✨ Код для ${selected} опубликован и синхронизирован!`);
             adminCodeInput.value = "";
         } catch (e) {
             showToast("Ошибка Firebase: " + e.message, true);
@@ -700,13 +796,19 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
         try {
             const batch = db.batch();
             for (let name of NEURAL_NAMES) {
-                const ref = db.collection("neural_codes").doc(name);
-                batch.set(ref, { code: DEFAULT_CODES[name] });
+                const codeRef = db.collection("neural_codes").doc(name);
+                batch.set(codeRef, { code: DEFAULT_CODES[name] });
+            }
+            // сброс рейтингов до 5 (опционально)
+            for (let name of NEURAL_NAMES) {
+                const ratingRef = db.collection("neural_ratings").doc(name);
+                batch.set(ratingRef, { rating: 5 });
             }
             await batch.commit();
             for (let name of NEURAL_NAMES) codesMap[name] = DEFAULT_CODES[name];
-            renderCards();
-            showToast("♻️ Все коды сброшены до стандартных (широкие примеры)");
+            for (let name of NEURAL_NAMES) ratingsMap[name] = 5;
+            fullReRender();
+            showToast("♻️ Коды сброшены, рейтинги = 5");
         } catch (err) {
             showToast("Ошибка сброса: " + err.message, true);
         }
@@ -717,18 +819,18 @@ deepSeekInference("Оптимизируй этот SQL запрос").then(conso
         adminCodeInput.value = codesMap[selected] || "";
     }
     
-    // Инициализация события
+    // events
     publishBtn.addEventListener("click", publishCode);
     resetBtn.addEventListener("click", resetToDefaults);
     aiSelectAdmin.addEventListener("change", updateAdminField);
     
-    // старт
     loadInitial().then(() => {
         subscribeFirestore();
         updateAdminField();
     }).catch(err => {
-        console.error("Firebase init error", err);
+        console.error(err);
         codesMap = { ...DEFAULT_CODES };
+        NEURAL_NAMES.forEach(n => ratingsMap[n] = 5);
         renderCards();
         showToast("⚠️ Локальный режим: Firebase недоступен", true);
     });
